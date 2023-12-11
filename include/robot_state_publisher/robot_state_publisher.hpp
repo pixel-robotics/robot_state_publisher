@@ -172,6 +172,9 @@ protected:
   /// The parameter event callback that will be called when a parameter is changed
   std::shared_ptr<rclcpp::Subscription<rcl_interfaces::msg::ParameterEvent,
     std::allocator<void>>> parameter_subscription_;
+
+  /// Timer to publsh transforms to /tf_static topic
+  rclcpp::TimerBase::SharedPtr static_tf_publish_timer_;
 };
 
 }  // namespace robot_state_publisher

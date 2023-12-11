@@ -147,7 +147,20 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
     std::bind(&RobotStatePublisher::callbackJointState, this, std::placeholders::_1),
     subscriber_options);
 
-  publishFixedTransforms();
+  double tf_static_publish_freq = this->declare_parameter("tf_static_publish_frequency", 0.0);
+  if (tf_static_publish_freq > 1000.0 || tf_static_publish_freq < 0.0) {
+    throw std::runtime_error("tf_static_publish_frequency must be between 0 and 1000");
+  }
+
+  if (tf_static_publish_freq > 0.0) {
+    std::chrono::milliseconds tf_static_publish_interval_ms =
+      std::chrono::milliseconds(static_cast<uint64_t>(1000.0 / tf_static_publish_freq));
+    static_tf_publish_timer_ = this->create_wall_timer(
+      tf_static_publish_interval_ms, std::bind(&RobotStatePublisher::publishFixedTransforms, this));
+  } else {
+    publishFixedTransforms();
+  }
+
 
   // Now that we have successfully declared the parameters and done all
   // necessary setup, install the callback for updating parameters.
