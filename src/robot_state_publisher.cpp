@@ -152,7 +152,7 @@ RobotStatePublisher::RobotStatePublisher(const rclcpp::NodeOptions & options)
     throw std::runtime_error("tf_static_publish_frequency must be between 0 and 1000");
   }
 
-  if (tf_static_publish_freq != 0.0) {
+  if (tf_static_publish_freq > 0.0) {
     std::chrono::milliseconds tf_static_publish_interval_ms =
       std::chrono::milliseconds(static_cast<uint64_t>(1000.0 / tf_static_publish_freq));
     static_tf_publish_timer_ = this->create_wall_timer(
